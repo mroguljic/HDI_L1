@@ -7,3 +7,10 @@ which is used to send instructions to the TBM through the DTB and is necessary t
 
 
 Link to psi46test repo: https://github.com/psi46/psi46test
+
+If DTB and/or labjack permissions are not properly set:
+
+```
+sudo chmod 777 /dev/bus/usb/00?/*
+sudo chmod 777 /dev/ttyUSB*
+```
