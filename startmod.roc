@@ -3,15 +3,15 @@ log === startdigmod ===
 fsel 2
 
 --- set voltages ----------------------------
-vd 2600 mV
+vd 2900 mV
 id  800 mA
 va 1600 mV
 ia  800 mA
 
 --- setup timing & levels -------------------
 clk  4
-sda  64  (CLK + 60)
----sda 64  (CLK + 60)
+---sda  19  (CLK + 15)
+sda 64 ---use with fsel 2
 ctr  4  (CLK + 0)
 tin  9  (CLK + 5)
 
@@ -22,48 +22,55 @@ tinlvl 10
 
 --- power on --------------------------------
 pon
-mdelay 400
+mdelay 1000
 resoff
-mdelay 200
+mdelay 1000
 
 getid
 getia
 
 --- setup TBM -------------------------------
-modsel b11111
+modsel 31
 
-tbmset $E4 $F0    Init TBM, Reset ROC
-tbmset $F4 $F0
-tbmset $E0 $41    Disable PKAM Counter
-tbmset $F0 $41
+tbmset $E0 $C1    Init TBM, Reset ROC
+tbmset $F0 $C1
 tbmset $E2 $C0    Mode = Calibration
 tbmset $F2 $C0
-tbmset $E8 $10    Set PKAM Counter
+tbmset $E4 $80
+tbmset $F4 $80
+tbmset $E8 $10
 tbmset $F8 $10
-tbmset $EA b00000000 Delays
-tbmset $FA b00000000
-tbmset $EC $00    Temp measurement control
+tbmset $EA $ED
+tbmset $FA $ED
 tbmset $FC $00
-
+tbmset $EC $00
+tbmset $FE $E8
+tbmset $EE $E8
+--- tbmset $EA b00000000 Delays
+--- tbmset $FA b00000000
 mdelay 100
 
 --- setup TBM2 -------------------------------
-modsel b11110
+modsel 30
 
-tbmset $E4 $F0    Init TBM, Reset ROC
-tbmset $F4 $F0
-tbmset $E0 $41    Disable PKAM Counter
-tbmset $F0 $41
+tbmset $E0 $C1    Init TBM, Reset ROC
+tbmset $F0 $C1
 tbmset $E2 $C0    Mode = Calibration
 tbmset $F2 $C0
-tbmset $E8 $10    Set PKAM Counter
+tbmset $E4 $80
+tbmset $F4 $80
+tbmset $E8 $10
 tbmset $F8 $10
-tbmset $EA b00000000 Delays
-tbmset $FA b00000000
-tbmset $EC $00    Temp measurement control
+tbmset $EA $ED
+tbmset $FA $ED
 tbmset $FC $00
-
+tbmset $EC $00
+tbmset $FE $E8
+tbmset $EE $E8
+--- tbmset $EA b00000000 Delays
+--- tbmset $FA b00000000
 mdelay 100
+
 
 --- setup all ROCs --------------------------
 select :
@@ -99,6 +106,7 @@ flush
 
 mask
 
+
 --- setup probe outputs ---------------------
 d1 9  sync
 d2 3  sda_send
@@ -106,10 +114,10 @@ a1 1  sdata
 --- a1 3  sda_send
 
 --- setup readout timing --------------------
-pgstop
-pgset 0 b010000  20  pg_rest
-pgset 1 b000000   0
-pgsingle
+
+pgset 0 b010000 0
+pgsingle 100
+flush
 
 pgset 0 b010000  15  pg_rest
 pgset 1 b000100  30  pg_cal
@@ -118,7 +126,6 @@ pgset 3 b000100  30  pg_cal
 pgset 4 b000010  30  pg_trg
 pgset 5 b000100  30  pg_cal
 pgset 6 b000010   0  pg_trg
-
-pgloop 20000
+pgloop 50000
 
 flush
